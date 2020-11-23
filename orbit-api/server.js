@@ -26,7 +26,7 @@ app.post('/api/authenticate', async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({
-      email
+      email: email.toLowerCase()
     }).lean();
 
     if (!user) {
