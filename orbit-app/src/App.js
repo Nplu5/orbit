@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom';
 import './App.css';
 import AppShell from './AppShell';
-import { AuthProvider } from './context/AuthContext';
+import { AuthContext, AuthProvider } from './context/AuthContext';
 import { FetchProvider } from './context/FetchContext';
 import Account from './pages/Account';
 import Dashboard from './pages/Dashboard';
@@ -17,6 +18,36 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import Signup from './pages/Signup';
 import Users from './pages/Users';
+
+const AuthenticatedRoute = ({children, ...rest}) => {
+  const authContext = useContext(AuthContext)
+  return(
+    <Route {...rest} render={() => 
+      authContext.isAuthenticated() ? (
+        <AppShell>
+          {children}
+        </AppShell>
+      ) : (
+        <Redirect to='/' />
+      )
+    } />
+  )
+}
+
+const AdminRoute = ({children, ...rest}) => {
+  const authContext = useContext(AuthContext)
+  return(
+    <Route {...rest} render={() => 
+      authContext.isAuthenticated() && authContext.isAdmin() ? (
+        <AppShell>
+          {children}
+        </AppShell>
+      ) : (
+        <Redirect to='/' />
+      )
+    } />
+  )
+}
 
 const AppRoutes = () => {
   return (
@@ -30,31 +61,21 @@ const AppRoutes = () => {
       <Route exact path="/">
         <Home />
       </Route>
-      <Route path="/dashboard">
-        <AppShell>
-          <Dashboard />
-        </AppShell>
-      </Route>
-      <Route path="/inventory">
-        <AppShell>
+      <AuthenticatedRoute path="/dashboard">
+            <Dashboard />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/inventory">
           <Inventory />
-        </AppShell>
-      </Route>
-      <Route path="/account">
-        <AppShell>
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/account">
           <Account />
-        </AppShell>
-      </Route>
-      <Route path="/settings">
-        <AppShell>
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/settings">
           <Settings />
-        </AppShell>
-      </Route>
-      <Route path="/users">
-        <AppShell>
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/users">
           <Users />
-        </AppShell>
-      </Route>
+      </AuthenticatedRoute>
       <Route path="*">
         <FourOFour />
       </Route>
