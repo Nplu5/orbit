@@ -83,13 +83,11 @@ const Sidebar = () => {
       </div>
       <div className="mt-20">
         {navItems.map((navItem, i) => (
-          <>
-          {navItem.allowedRoles.includes(role) &&(
+          navItem.allowedRoles.includes(role) &&(
             <NavItemContainer key={i}>
               <NavItem navItem={navItem} />
             </NavItemContainer>
-          )}
-          </>
+          )
         ))}
       </div>
     </section>

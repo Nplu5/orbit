@@ -14,11 +14,11 @@ const FetchProvider = ({ children }) => {
 
   authAxios.interceptors.request.use(
     config => {
-      const { origin } = new URL(config.URL)
+      const { origin } = new URL(config.baseURL)
       const allowedOrigins = ['http://localhost:3001']
       if(allowedOrigins.includes(origin)){
         config.headers.Authorization = `Bearer ${authContext.authState.token}`
-      }
+      } 
       return config
     },
     error => {
