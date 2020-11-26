@@ -5,24 +5,17 @@ const AuthContext = createContext();
 const { Provider } = AuthContext;
 
 const AuthProvider = ({ children }) => {
+  const token = localStorage.getItem("token")
+  const userInfo = localStorage.getItem("userInfo")
+  const expiresAt = localStorage.getItem("expiresAt")
+
   const history = useHistory()
   const [authState, setAuthState] = useState({
-    token: null,
-    expiresAt: null,
-    userInfo: {}
+    token: token,
+    expiresAt: expiresAt,
+    userInfo: userInfo ? JSON.parse(userInfo) : {}
   })
   
-  useEffect(() => {    
-    const token = localStorage.getItem("token")
-    const userInfo = localStorage.getItem("userInfo")
-    const expiresAt = localStorage.getItem("expiresAt")
-    setAuthState({
-      token,
-      expiresAt,
-      userInfo: userInfo ? JSON.parse(userInfo) : {}
-    })
-  }, [])
-
   const setAuthInfo = ({token, userInfo, expiresAt}) => {
     localStorage.setItem("token", token)
     localStorage.setItem("userInfo", JSON.stringify(userInfo))
