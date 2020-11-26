@@ -6,6 +6,7 @@ const jwtDecode = require('jwt-decode');
 const mongoose = require('mongoose');
 const jwt = require('express-jwt')
 const cookieParser = require('cookie-parser')
+const csrf = require('csurf')
 
 const dashboardData = require('./data/dashboard');
 const User = require('./data/User');
@@ -18,6 +19,9 @@ const {
 } = require('./util');
 
 const app = express();
+const csrfProtection = csrf({
+  cookie: true
+})
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -166,6 +170,12 @@ const checkJwt = jwt({
   issuer: 'api.orbit',
   audience: 'api.orbit',
   getToken: req => req.cookies.token
+})
+
+app.use(csrfProtection)
+
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken()})
 })
 
 const checkIsAdmin = (req, res, next) => {
